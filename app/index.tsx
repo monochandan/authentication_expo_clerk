@@ -7,6 +7,8 @@ import { Text,
 KeyboardAvoidingView } from "react-native";
 import { StyleSheet } from "react-native";
 
+import CustomeInput from "./components/customInput";
+
 
 export default function Index() {
   return (
@@ -16,14 +18,24 @@ export default function Index() {
     >
       <Text style={styles.title}>Sign In</Text>
 
-      <TextInput placeholder="Email" 
+      {/* <TextInput placeholder="Email" 
                 style={styles.input} 
                 autoCapitalize={'none'} 
                 keyboardType={'email-address'}
-                autoCorrect={false}/>
+                autoCorrect={false}/> */}
+      <CustomeInput placeholder="Email" 
+                  autoCapitalize={'none'} 
+                  keyboardType={'email-address'}
+                  autoCorrect={false}
+                  style={{borderColor:'red'}}
+      />
 
+      <CustomeInput placeholder="Password" 
+                    secureTextEntry={true}
+                    style={{borderColor:'green'}}
+      />
 
-      <TextInput placeholder="Password" style={styles.input} secureTextEntry={true}/>
+      {/* <TextInput placeholder="Password" style={styles.input} secureTextEntry={true}/> */}
 
       {/* <Button title="Sign in" onPress={() => {}} style={}/> */}
 
@@ -49,15 +61,6 @@ const styles = StyleSheet.create({
   title:{
     fontSize: 24,
     fontWeight: '600',
-  }
-  ,
-  input: {
-
-    borderWidth: 1,
-    padding: 10,
-    borderRadius: 5,
-    borderColor: '#ccc',
-
   }
   ,
   button:{
