@@ -15,7 +15,14 @@ export default function Index() {
       style={styles.container}
     >
       <Text style={styles.title}>Sign In</Text>
-      <TextInput placeholder="Email" style={styles.input}/>
+
+      <TextInput placeholder="Email" 
+                style={styles.input} 
+                autoCapitalize={'none'} 
+                keyboardType={'email-address'}
+                autoCorrect={false}/>
+
+
       <TextInput placeholder="Password" style={styles.input} secureTextEntry={true}/>
 
       {/* <Button title="Sign in" onPress={() => {}} style={}/> */}
@@ -32,7 +39,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     // alignItems: 'center',
-    // justifyContent: 'flex-end',
+    justifyContent: 'center',
     padding: 20,
     gap: 20,
     margin: 50,
