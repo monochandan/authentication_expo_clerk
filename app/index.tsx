@@ -8,6 +8,7 @@ KeyboardAvoidingView } from "react-native";
 import { StyleSheet } from "react-native";
 
 import CustomeInput from "./components/customInput";
+import CustomeButton from "./components/customeButton";
 
 
 export default function Index() {
@@ -35,13 +36,14 @@ export default function Index() {
                     style={{borderColor:'green'}}
       />
 
-      {/* <TextInput placeholder="Password" style={styles.input} secureTextEntry={true}/> */}
 
-      {/* <Button title="Sign in" onPress={() => {}} style={}/> */}
+     <CustomeButton 
+        text="Sign In"
+        onPress={() => {
+          console.log("pressed")
+        }}
+      />
 
-      <Pressable onPress={() => {}} style={styles.button}>
-        <Text style={styles.buttonText}>Sign In</Text>
-      </Pressable>
     </KeyboardAvoidingView>
   );
 }
@@ -62,17 +64,5 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '600',
   }
-  ,
-  button:{
-    borderRadius: 10,
-    backgroundColor:'#4353FD',
-    padding: 15,
-    alignItems:'center',
-  }
-  ,
-  buttonText:{
-    color:'white',
-    fontSize:16,
-    fontWeight:'600',
-  }
+  
 })
