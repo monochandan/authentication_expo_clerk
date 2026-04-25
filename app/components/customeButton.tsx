@@ -5,6 +5,7 @@ type CustomButtonProps = {
     text: string;
 
 } & PressableProps 
+
 export default function CustomeButton({text, ...pressableProps}: CustomButtonProps){
 
     return (

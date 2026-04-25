@@ -1,17 +1,40 @@
 import { Text, 
-  TextInput, 
+  // TextInput, 
   View, 
-  Button, 
-  Pressable, 
+  // Button, 
+  // Pressable, 
   Platform,
 KeyboardAvoidingView } from "react-native";
 import { StyleSheet } from "react-native";
 
 import CustomeInput from "./components/customInput";
 import CustomeButton from "./components/customeButton";
-
+// import { useEffect, useState } from "react";
+import {useForm, 
+        // Controller
+      } from 'react-hook-form';
 
 export default function Index() {
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
+
+  const {control, handleSubmit, formState: {errors}, } = useForm({
+    defaultValues:{
+      // email: 'abc@gmail.com',
+    },
+  });
+
+  console.log(errors)
+  const onSignIn = (data: any) => {
+    // manual validation -  email is provided or not, rejected or not 
+    console.log("sign in: ", data);
+  };
+
+  // useEffect(() =>{
+  //     setEmail('')
+  //     setPassword('')
+  // },[])
+
   return (
     <KeyboardAvoidingView
     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -24,24 +47,45 @@ export default function Index() {
                 autoCapitalize={'none'} 
                 keyboardType={'email-address'}
                 autoCorrect={false}/> */}
-      <CustomeInput placeholder="Email" 
+
+      {/* <Controller name='email' control={control} render={({field: {value, onChange, onBlur}}) =>
+        <TextInput placeholder="controller input" 
+                style={{backgroundColor: 'snow'}}
+                value = {value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+        />
+      }/> */}
+      <View style={styles.form}>
+
+            <CustomeInput placeholder="Email" 
+                  control={control}
+                  name='email'
+                  onPress={onSignIn}
+                  // value={email}
+                  // onChangeText={setEmail}
                   autoCapitalize={'none'} 
                   keyboardType={'email-address'}
                   autoCorrect={false}
                   style={{borderColor:'red'}}
-      />
+        />
 
-      <CustomeInput placeholder="Password" 
-                    secureTextEntry={true}
-                    style={{borderColor:'green'}}
-      />
+        <CustomeInput placeholder="Password" 
+                      control={control}
+                      name="password"
+                      // value={password}
+                      // onChangeText={setPassword}
+                      secureTextEntry={true}
+                      style={{borderColor:'green'}}
+        />
+
+      </View>
+      
 
 
      <CustomeButton 
         text="Sign In"
-        onPress={() => {
-          console.log("pressed")
-        }}
+        onPress={handleSubmit(onSignIn)}
       />
 
     </KeyboardAvoidingView>
@@ -63,6 +107,9 @@ const styles = StyleSheet.create({
   title:{
     fontSize: 24,
     fontWeight: '600',
+  },
+  form:{
+    gap:2,
   }
   
 })
