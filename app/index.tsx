@@ -14,6 +14,22 @@ import {useForm,
         // Controller
       } from 'react-hook-form';
 
+import {z} from 'zod';
+import {zodResolver} from '@hookform/resolvers/zod';
+
+
+const signInSchema = z.object({
+  email: z.string(
+    {message:"email is required."})
+    .email("email is invalid"),
+
+  password: z.string(
+      {message:"password is required."})
+      .min(8, 'password should be atleast 8 characters long'),
+});
+
+type SignInFields = z.infer<typeof signInSchema>;
+ 
 export default function Index() {
   // const [email, setEmail] = useState('');
   // const [password, setPassword] = useState('');
@@ -22,12 +38,13 @@ export default function Index() {
     defaultValues:{
       // email: 'abc@gmail.com',
     },
+    resolver:zodResolver(signInSchema),
   });
 
   console.log(errors)
-  const onSignIn = (data: any) => {
+  const onSignIn = (data: SignInFields) => {
     // manual validation -  email is provided or not, rejected or not 
-    console.log("sign in: ", data);
+    console.log("sign in: ", data.email, data.password);
   };
 
   // useEffect(() =>{

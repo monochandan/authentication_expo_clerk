@@ -13,7 +13,7 @@ export default function CustomeInput({control, name, ...props}: CustomeInputProp
                 <Controller 
                     control={control} 
                     name={name} 
-                    rules={{required: "This field is required!"}} 
+                    // rules={{required: "This field is required!"}} 
                     render={({
                         field: {value, onChange, onBlur},
                         fieldState:{error}
