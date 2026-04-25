@@ -12,6 +12,7 @@ import CustomeButton from "./components/customeButton";
 // import { useEffect, useState } from "react";
 import {useForm, 
         // Controller
+        // FieldValues,
       } from 'react-hook-form';
 
 import {z} from 'zod';
@@ -75,9 +76,10 @@ export default function Index() {
       }/> */}
       <View style={styles.form}>
 
-            <CustomeInput placeholder="Email" 
+            <CustomeInput<SignInFields>
+                  placeholder="Email" 
                   control={control}
-                  name='email'
+                  name='email' // name: Path<T>; from customeInput
                   onPress={onSignIn}
                   // value={email}
                   // onChangeText={setEmail}

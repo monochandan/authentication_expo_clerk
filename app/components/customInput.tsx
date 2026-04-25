@@ -1,13 +1,13 @@
 import { TextInput, StyleSheet, TextInputProps, Text, View } from "react-native"
-import {Controller} from 'react-hook-form';
-type CustomeInputProps={
+import {Control, Controller,FieldValues, Path} from 'react-hook-form';
+type CustomeInputProps<T extends FieldValues>={
 
-    control: any;
-    name: string;
+    control: Control<T> // custom fileds    // any;   
+    name: Path<T>;
     // custome field
 } & TextInputProps
 
-export default function CustomeInput({control, name, ...props}: CustomeInputProps){
+export default function CustomeInput<T extends FieldValues>({control, name, ...props}: CustomeInputProps<T>){
     return (
 
                 <Controller 
