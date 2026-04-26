@@ -1,0 +1,142 @@
+import { Text, 
+  // TextInput, 
+  View, 
+  // Button, 
+  // Pressable, 
+  Platform,
+KeyboardAvoidingView, StyleSheet } from "react-native";
+
+
+import CustomeInput from "../components/customInput"
+import CustomeButton from "../components/customeButton";
+// import { useEffect, useState } from "react";
+import {useForm, 
+        // Controller
+        // FieldValues,
+      } from 'react-hook-form';
+
+import {z} from 'zod';
+import {zodResolver} from '@hookform/resolvers/zod';
+import { Link } from "expo-router";
+
+
+const signUpSchema = z.object({
+  email: z.string(
+    {message:"email is required."})
+    .email("email is invalid"),
+
+  password: z.string(
+      {message:"password is required."})
+      .min(8, 'password should be atleast 8 characters long'),
+});
+
+type SignUpFields = z.infer<typeof signUpSchema>;
+ 
+export default function SignUp() {
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
+
+  const {control, handleSubmit, formState: {errors}, } = useForm<SignUpFields>({
+    defaultValues:{
+      // email: 'abc@gmail.com',
+    },  
+    resolver:zodResolver(signUpSchema),
+  });
+
+  console.log(errors)
+  const onSignUp = (data: SignUpFields) => {
+    // manual validation -  email is provided or not, rejected or not 
+    console.log("sign up: ", data.email, data.password);
+  };
+
+  // useEffect(() =>{
+  //     setEmail('')
+  //     setPassword('')
+  // },[])
+
+  return (
+    <KeyboardAvoidingView
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+            <Text style={styles.title}>Create an account</Text>
+
+            {/* <TextInput placeholder="Email" 
+                        style={styles.input} 
+                        autoCapitalize={'none'} 
+                        keyboardType={'email-address'}
+                        autoCorrect={false}/> */}
+
+            {/* <Controller name='email' control={control} render={({field: {value, onChange, onBlur}}) =>
+                <TextInput placeholder="controller input" 
+                        style={{backgroundColor: 'snow'}}
+                        value = {value}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                />
+            }/> */}
+            <View style={styles.form}>
+
+                    <CustomeInput
+                        placeholder="Email" 
+                        control={control}
+                        name='email' // name: Path<T>; from customeInput
+                        // onPress={onSignIn}
+                        // value={email}
+                        // onChangeText={setEmail}
+                        autoFocus
+                        autoCapitalize={'none'} 
+                        keyboardType={'email-address'}
+                        autoCorrect={false}
+                        style={{borderColor:'red'}}
+                />
+
+                <CustomeInput placeholder="Password" 
+                            control={control}
+                            name="password"
+                            // value={password}
+                            // onChangeText={setPassword}
+                            secureTextEntry={true}
+                            style={{borderColor:'green'}}
+                />
+
+            </View>
+            
+
+
+            <CustomeButton 
+                text="Sign Up"
+                onPress={handleSubmit(onSignUp)}
+            />
+            <Link href='/sign-in' style={styles.link}>Sign In to your account</Link>
+    
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    // marginTop:5,
+    flex: 1,
+    backgroundColor: '#fff',
+    // alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    gap: 20,
+    margin: 50,
+    borderRadius: 10,
+  }
+  ,
+  title:{
+    fontSize: 24,
+    fontWeight: '600',
+  },
+  form:{
+    gap:2,
+  },
+  link:{
+    color:"#4353FD",
+    fontWeight:'600',
+  }
+  
+})

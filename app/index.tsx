@@ -1,135 +1,35 @@
-import { Text, 
-  // TextInput, 
-  View, 
-  // Button, 
-  // Pressable, 
-  Platform,
-KeyboardAvoidingView } from "react-native";
-import { StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Button } from "react-native";
+import { Link } from "expo-router";
+import { useAuth } from "./providers/AuthProviders";
+export default function Index(){
+  
+  const {isAuthenticated, signOut} = useAuth();
 
-import CustomeInput from "./components/customInput";
-import CustomeButton from "./components/customeButton";
-// import { useEffect, useState } from "react";
-import {useForm, 
-        // Controller
-        // FieldValues,
-      } from 'react-hook-form';
-
-import {z} from 'zod';
-import {zodResolver} from '@hookform/resolvers/zod';
-
-
-const signInSchema = z.object({
-  email: z.string(
-    {message:"email is required."})
-    .email("email is invalid"),
-
-  password: z.string(
-      {message:"password is required."})
-      .min(8, 'password should be atleast 8 characters long'),
-});
-
-type SignInFields = z.infer<typeof signInSchema>;
- 
-export default function Index() {
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
-
-  const {control, handleSubmit, formState: {errors}, } = useForm<SignInFields>({
-    defaultValues:{
-      // email: 'abc@gmail.com',
-    },  
-    resolver:zodResolver(signInSchema),
-  });
-
-  console.log(errors)
-  const onSignIn = (data: SignInFields) => {
-    // manual validation -  email is provided or not, rejected or not 
-    console.log("sign in: ", data.email, data.password);
-  };
-
-  // useEffect(() =>{
-  //     setEmail('')
-  //     setPassword('')
-  // },[])
+  console.log("From auth provider: ", isAuthenticated, signOut)
 
   return (
-    <KeyboardAvoidingView
-    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
-      <Text style={styles.title}>Sign In</Text>
-
-      {/* <TextInput placeholder="Email" 
-                style={styles.input} 
-                autoCapitalize={'none'} 
-                keyboardType={'email-address'}
-                autoCorrect={false}/> */}
-
-      {/* <Controller name='email' control={control} render={({field: {value, onChange, onBlur}}) =>
-        <TextInput placeholder="controller input" 
-                style={{backgroundColor: 'snow'}}
-                value = {value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-        />
-      }/> */}
-      <View style={styles.form}>
-
-            <CustomeInput
-                  placeholder="Email" 
-                  control={control}
-                  name='email' // name: Path<T>; from customeInput
-                  // onPress={onSignIn}
-                  // value={email}
-                  // onChangeText={setEmail}
-                  autoFocus
-                  autoCapitalize={'none'} 
-                  keyboardType={'email-address'}
-                  autoCorrect={false}
-                  style={{borderColor:'red'}}
-        />
-
-        <CustomeInput placeholder="Password" 
-                      control={control}
-                      name="password"
-                      // value={password}
-                      // onChangeText={setPassword}
-                      secureTextEntry={true}
-                      style={{borderColor:'green'}}
-        />
-
+      <View style={styles.container}>
+            <Text style={styles.title}>Wlecome to the world!</Text>
+            <Link href='/(auth)/sign-in'>Go to Sign In</Link>
+            {/* <Link href='/(auth)/sign-up'>Go to Sign In</Link> */}
+            <Link href='/(protecetd)/homeScreen'>Go to protected screens</Link>
+            <Text>{isAuthenticated ? 'Authenticated' : 'Not Authenticated'}</Text>
+            <Button title='Sign Out' onPress={signOut}/>
       </View>
-      
-
-
-     <CustomeButton 
-        text="Sign In"
-        onPress={handleSubmit(onSignIn)}
-      />
-
-    </KeyboardAvoidingView>
-  );
-}
+  )
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    // alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
+
+  container:{
+    flex:1,
+    justifyContent:'center',
+    alignItems:'center',
     gap: 20,
-    margin: 50,
-    borderRadius: 10,
-  }
-  ,
+  },
   title:{
     fontSize: 24,
-    fontWeight: '600',
-  },
-  form:{
-    gap:2,
+    fontWeight: 'bold',
   }
-  
-})
+
+});
