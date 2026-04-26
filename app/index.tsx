@@ -35,10 +35,10 @@ export default function Index() {
   // const [email, setEmail] = useState('');
   // const [password, setPassword] = useState('');
 
-  const {control, handleSubmit, formState: {errors}, } = useForm({
+  const {control, handleSubmit, formState: {errors}, } = useForm<SignInFields>({
     defaultValues:{
       // email: 'abc@gmail.com',
-    },
+    },  
     resolver:zodResolver(signInSchema),
   });
 
@@ -76,13 +76,14 @@ export default function Index() {
       }/> */}
       <View style={styles.form}>
 
-            <CustomeInput<SignInFields>
+            <CustomeInput
                   placeholder="Email" 
                   control={control}
                   name='email' // name: Path<T>; from customeInput
-                  onPress={onSignIn}
+                  // onPress={onSignIn}
                   // value={email}
                   // onChangeText={setEmail}
+                  autoFocus
                   autoCapitalize={'none'} 
                   keyboardType={'email-address'}
                   autoCorrect={false}
