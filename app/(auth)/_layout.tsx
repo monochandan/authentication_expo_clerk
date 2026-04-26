@@ -7,6 +7,7 @@ export default function AuthLayout() {
     console.log("Auth Layout")
 
     const {isAuthenticated} = useAuth();
+    
     if(isAuthenticated){
         return <Redirect href='/'/>
     }
