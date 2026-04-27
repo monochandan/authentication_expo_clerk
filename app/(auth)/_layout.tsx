@@ -7,7 +7,7 @@ import { useAuth } from '../providers/AuthProviders'
 export default function AuthLayout() {
     console.log("Auth Layout")
 
-    const {isAuthenticated} = useAuth();
+    const {isAuthisenticated} = useAuth();
 
     if(isAuthenticated){
         // redirect to app/index.tsx

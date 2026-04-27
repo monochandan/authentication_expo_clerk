@@ -18,7 +18,7 @@ import {useForm,
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
 import { Link } from "expo-router";
-// import { useAuth } from "../providers/AuthProviders";
+import { useAuth } from "../providers/AuthProviders";
 
 
 const signInSchema = z.object({
@@ -46,12 +46,12 @@ export default function SignIn() {
 
   console.log("errors from sign in:",errors)
 
-//   const {signIn} = useAuth();
+const {signIn} = useAuth();
 
   const onSignIn = (data: SignInFields) => {
     // manual validation -  email is provided or not, rejected or not 
     console.log("sign in: ", data.email, data.password);
-    // signIn();
+    signIn();
     // router.replace('/');
   };
 
