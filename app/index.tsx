@@ -1,6 +1,8 @@
 import { View, Text, StyleSheet, Button } from "react-native";
 import { Link } from "expo-router";
 import { useAuth } from "./providers/AuthProviders";
+
+// splash screen
 export default function Index(){
   
   const {isAuthenticated, signOut} = useAuth();
