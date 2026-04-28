@@ -17,9 +17,9 @@ import {useForm,
 
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
-import { type Href, Link } from "expo-router";
+// import { type Href, Link } from "expo-router";
 
-import {  useSignIn } from '@clerk/expo'
+// import {  useSignIn } from '@clerk/expo'
 import {useRouter} from  'expo-router';
 
 

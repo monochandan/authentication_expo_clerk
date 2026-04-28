@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet, Button } from "react-native";
 import { Link } from "expo-router";
-import { useAuth } from "./providers/AuthProviders";
+import { useAuth } from "@clerk/expo";
 export default function Index(){
   
-  const {isAuthenticated, signOut} = useAuth();
+  const {isSignedIn, signOut} = useAuth();
 
-  console.log("From auth provider: ", isAuthenticated, signOut)
+  console.log("From auth provider: ", isSignedIn, signOut)
 
   return (
       <View style={styles.container}>
@@ -13,7 +13,7 @@ export default function Index(){
             <Link href='/(auth)/sign-in'>Go to Sign In</Link>
             {/* <Link href='/(auth)/sign-up'>Go to Sign In</Link> */}
             <Link href='/(protecetd)/homeScreen'>Go to protected screens</Link>
-            <Text>{isAuthenticated ? 'Authenticated' : 'Not Authenticated'}</Text>
+            <Text>{isSignedIn ? 'Authenticated' : 'Not Authenticated'}</Text>
             <Button title='Sign Out' onPress={signOut}/>
       </View>
   )
