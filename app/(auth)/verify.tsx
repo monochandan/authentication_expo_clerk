@@ -21,7 +21,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 
 // import {  useSignIn } from '@clerk/expo'
 import {type Href, useRouter} from  'expo-router';
-import { useSignUp } from "@clerk/expo";
+import { useClerk, useSignUp } from "@clerk/expo";
 
 
 const verifySchema = z.object({
@@ -42,6 +42,7 @@ export default function VerifyScreen() {
 
   const router = useRouter();
   const {signUp} = useSignUp();
+  const {setActive} = useClerk();
 
   const {control, handleSubmit, formState: {errors}, } = useForm<VerifyFields>({
     defaultValues:{
@@ -65,9 +66,18 @@ export default function VerifyScreen() {
         if(signUp.status === 'complete'){
             await signUp.finalize({
                 navigate: ({session, decorateUrl}) => {
+                        // setActive() → creates session 
+                        // useAuth() → reads session
+                        setActive({
+                            session: session?.id
+                        })
                         router.push(decorateUrl("/sign-in") as Href);
                 }   
             })
+        }
+        else{
+            console.log('verification failed!');
+            console.log("signup attempt: ", signUp);
         }
 
     }catch(error){
