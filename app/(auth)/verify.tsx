@@ -20,7 +20,8 @@ import {zodResolver} from '@hookform/resolvers/zod';
 // import { type Href, Link } from "expo-router";
 
 // import {  useSignIn } from '@clerk/expo'
-import {useRouter} from  'expo-router';
+import {type Href, useRouter} from  'expo-router';
+import { useSignUp } from "@clerk/expo";
 
 
 const verifySchema = z.object({
@@ -40,6 +41,7 @@ export default function VerifyScreen() {
   // const [password, setPassword] = useState('');
 
   const router = useRouter();
+  const {signUp} = useSignUp();
 
   const {control, handleSubmit, formState: {errors}, } = useForm<VerifyFields>({
     defaultValues:{
@@ -53,8 +55,24 @@ export default function VerifyScreen() {
 // const {signIn} = useAuth();
   // const {signIn} = useSignIn();
 
-  const onVerify = async (data: VerifyFields) => {
-    
+  const onVerify = async ({code}: VerifyFields) => {
+
+    try{
+        await signUp.verifications.verifyEmailCode({
+            code
+        })
+
+        if(signUp.status === 'complete'){
+            await signUp.finalize({
+                navigate: ({session, decorateUrl}) => {
+                        router.push(decorateUrl("/sign-in") as Href);
+                }   
+            })
+        }
+
+    }catch(error){
+        console.error(JSON.stringify(error, null, 2));
+    }
   };
 
   // useEffect(() =>{
@@ -86,7 +104,7 @@ export default function VerifyScreen() {
             <View style={styles.form}>
 
                     <CustomeInput
-                        placeholder="Email" 
+                        placeholder="code" 
                         control={control}
                         name='code' // name: Path<T>; from customeInput
                         // onPress={onSignIn}

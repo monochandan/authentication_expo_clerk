@@ -72,6 +72,12 @@ export default function SignUp() {
 
         console.log("Sign up result: ", signUp.status);
         // if(signUp.status === "complete"){
+
+        // send the verification code
+        await signUp.verifications.sendEmailCode()
+
+        // console.log("code: ",code);
+
         route.push('/verify');
         // }
 
