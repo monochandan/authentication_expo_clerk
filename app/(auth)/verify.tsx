@@ -23,73 +23,38 @@ import {  useSignIn } from '@clerk/expo'
 import {useRouter} from  'expo-router';
 
 
-const signInSchema = z.object({
-  email: z.string(
-    {message:"email is required."})
-    .email("email is invalid"),
+const verifySchema = z.object({
+  code: z.string(
+    {message:"code is required."})
+    .length(6, 'Invalid Code'),
 
-  password: z.string(
-      {message:"password is required."})
-      .min(8, 'password should be atleast 8 characters long'),
+//   password: z.string(
+//       {message:"password is required."})
+//       .min(8, 'password should be atleast 8 characters long'),
 });
 
-type SignInFields = z.infer<typeof signInSchema>;
+type VerifyFields = z.infer<typeof verifySchema>;
  
-export default function SignIn() {
+export default function VerifyScreen() {
   // const [email, setEmail] = useState('');
   // const [password, setPassword] = useState('');
 
   const router = useRouter();
 
-  const {control, handleSubmit, formState: {errors}, } = useForm<SignInFields>({
+  const {control, handleSubmit, formState: {errors}, } = useForm<VerifyFields>({
     defaultValues:{
       // email: 'abc@gmail.com',
     },  
-    resolver:zodResolver(signInSchema),
+    resolver:zodResolver(verifySchema),
   });
 
     // console.log("errors from sign in:",errors)
 
 // const {signIn} = useAuth();
-  const {signIn} = useSignIn();
+  // const {signIn} = useSignIn();
 
-  const onSignIn = async (data: SignInFields) => {
-    // manual validation -  email is provided or not, rejected or not
-    console.log("Sign in to Account");
-    // console.log("Sign in values: ", signIn);
+  const onVerify = async (data: VerifyFields) => {
     
-
-    try{
-        if(!signIn){
-        return;
-        }
-        await signIn.create({
-            identifier: data.email,
-            password: data.password,
-
-        });
-
-        console.log("Sign In attempt: ", signIn.status);
-        if(signIn.status === 'complete'){
-            console.log("Sign in successfull");
-
-            await signIn.finalize({
-                navigate: ({ session, decorateUrl }) => {
-                    console.log("Session: ", session)
-                    router.push(decorateUrl('/') as Href)
-                }
-            })
-        }
-        else{
-            console.log("Sign In failed");
-        }
-    }catch(error: any){
-        console.error(JSON.stringify(error, null, 2))
-    }
-    console.log("Sign In: ", data.email, data.password);
-    console.log("End function");
-    // signIn();
-    // router.replace('/');
   };
 
   // useEffect(() =>{
@@ -102,7 +67,7 @@ export default function SignIn() {
     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-            <Text style={styles.title}>Sign In</Text>
+            <Text style={styles.title}>Verify your email</Text>
 
             {/* <TextInput placeholder="Email" 
                         style={styles.input} 
@@ -123,36 +88,28 @@ export default function SignIn() {
                     <CustomeInput
                         placeholder="Email" 
                         control={control}
-                        name='email' // name: Path<T>; from customeInput
+                        name='code' // name: Path<T>; from customeInput
                         // onPress={onSignIn}
                         // value={email}
                         // onChangeText={setEmail}
                         autoFocus
                         autoCapitalize={'none'} 
-                        keyboardType={'email-address'}
+                        keyboardType={'number-pad'}
                         autoCorrect={false}
                         style={{borderColor:'red'}}
+                        autoComplete="one-time-code"
                 />
 
-                <CustomeInput placeholder="Password" 
-                            control={control}
-                            name="password"
-                            // value={password}
-                            // onChangeText={setPassword}
-                            secureTextEntry={true}
-                            style={{borderColor:'green'}}
-                />
 
             </View>
             
 
 
             <CustomeButton 
-                text="Sign In"
-                onPress={handleSubmit(onSignIn)}
+                text="Verify"
+                onPress={handleSubmit(onVerify)}
             />
 
-            <Link href='/sign-up' style={styles.link}>Do not have an account? Sign Up</Link>
 
     </KeyboardAvoidingView>
   );

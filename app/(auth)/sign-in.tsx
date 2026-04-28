@@ -17,8 +17,9 @@ import {useForm,
 
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
-import { Link } from "expo-router";
-import { useAuth } from "../providers/AuthProviders";
+import { type Href, Link } from "expo-router";
+import {useSignIn } from "@clerk/expo";
+import { useRouter } from "expo-router";
 
 
 const signInSchema = z.object({
@@ -36,6 +37,7 @@ type SignInFields = z.infer<typeof signInSchema>;
 export default function SignIn() {
   // const [email, setEmail] = useState('');
   // const [password, setPassword] = useState('');
+  const route = useRouter();
 
   const {control, handleSubmit, formState: {errors}, } = useForm<SignInFields>({
     defaultValues:{
@@ -46,12 +48,31 @@ export default function SignIn() {
 
   console.log("errors from sign in:",errors)
 
-  const {signIn} = useAuth();
+  const {signIn} = useSignIn();
 
-  const onSignIn = (data: SignInFields) => {
+  const onSignIn = async (data: SignInFields) => {
     // manual validation -  email is provided or not, rejected or not 
     console.log("sign in: ", data.email, data.password);
-    signIn();
+    try{
+        if(!signIn) return;
+        
+        await signIn.create({
+            identifier: data.email,
+            password: data.password
+        })
+
+        if(signIn.status === 'complete'){
+            await signIn.finalize({
+                navigate: ({session, decorateUrl}) =>{
+
+                    route.push(decorateUrl("/") as Href)
+                }
+            })
+        }
+    }
+    catch(error: any){
+        console.error(JSON.stringify(error, null, 2))
+    }
     // router.replace('/');
   };
 
