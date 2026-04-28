@@ -21,7 +21,11 @@ import {zodResolver} from '@hookform/resolvers/zod';
 
 // import {  useSignIn } from '@clerk/expo'
 import {type Href, useRouter} from  'expo-router';
+import {useEffect} from 'react';
 import { useClerk, useSignUp } from "@clerk/expo";
+import SignUp from "./sign-up";
+
+// import * as Progress from 'react-native-progress';
 
 
 const verifySchema = z.object({
@@ -35,6 +39,8 @@ const verifySchema = z.object({
 });
 
 type VerifyFields = z.infer<typeof verifySchema>;
+
+
  
 export default function VerifyScreen() {
   // const [email, setEmail] = useState('');
@@ -55,6 +61,13 @@ export default function VerifyScreen() {
 
 // const {signIn} = useAuth();
   // const {signIn} = useSignIn();
+//   useEffect(() =>{
+//     const timer = setTimeout(async () => {
+//         //await signUp?.abandonSession;
+//         router.replace('/sign-up');
+//     }, 5000);
+//     return () => clearTimeout(timer); // cleanup if user verifies in time
+// },[])
 
   const onVerify = async ({code}: VerifyFields) => {
 
@@ -63,15 +76,20 @@ export default function VerifyScreen() {
             code
         })
 
+        if(signUp.status === 'abandoned'){
+
+        }
+
         if(signUp.status === 'complete'){
             await signUp.finalize({
                 navigate: ({session, decorateUrl}) => {
                         // setActive() → creates session 
                         // useAuth() → reads session
+                        // when use first create the account
                         setActive({
                             session: session?.id
                         })
-                        router.push(decorateUrl("/sign-in") as Href);
+                        router.push(decorateUrl("/") as Href);
                 }   
             })
         }

@@ -4,7 +4,8 @@ import { Text,
   // Button, 
   // Pressable, 
   Platform,
-KeyboardAvoidingView, StyleSheet } from "react-native";
+KeyboardAvoidingView, StyleSheet, 
+Alert} from "react-native";
 
 
 import CustomeInput from "../components/customInput"
@@ -18,7 +19,7 @@ import {useForm,
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
 import { type Href, Link } from "expo-router";
-import {useSignIn } from "@clerk/expo";
+import {isClerkAPIResponseError, useClerk, useSignIn, useAuth } from "@clerk/expo";
 import { useRouter } from "expo-router";
 
 
@@ -33,20 +34,53 @@ const signInSchema = z.object({
 });
 
 type SignInFields = z.infer<typeof signInSchema>;
+
+
+
+// errors:[{
+//  "code": "form_identification not found",
+// "message": "could not find your account",
+// "longMessage": "could not find your account",
+// "meta": {
+//      "paramName": "identifier"
+// }
+//}]
+
+// which field is giving the errors. in clerk the error list contain a meta object, 
+// which containe which form is giving the error.
+// const clerkErrorToFormField = {
+//     identifier: 'email',
+//     password: 'password',
+// };
+
+const mapClerkErrorToFormField = (error: any) => {
+    switch(error.meta?.paramName){
+        case 'identifier':
+            return 'email';
+        case 'password':
+            return 'password';
+        default:
+            return 'root';
+    }
+}
  
 export default function SignIn() {
   // const [email, setEmail] = useState('');
   // const [password, setPassword] = useState('');
   const route = useRouter();
+  const {isLoaded} = useAuth();
 
-  const {control, handleSubmit, formState: {errors}, } = useForm<SignInFields>({
+  const {setActive} = useClerk();
+  // setError : set errors manually in our form
+
+  const {control, handleSubmit, setError, formState: {errors} } = useForm<SignInFields>({
     defaultValues:{
       // email: 'abc@gmail.com',
     },  
     resolver:zodResolver(signInSchema),
   });
 
-  console.log("errors from sign in:",errors)
+console.log("errors from sign in:",JSON.stringify(errors, null, 2));
 
   const {signIn} = useSignIn();
 
@@ -54,8 +88,11 @@ export default function SignIn() {
     // manual validation -  email is provided or not, rejected or not 
     console.log("sign in: ", data.email, data.password);
     try{
-        if(!signIn) return;
-        
+        if (!isLoaded){
+            console.log("Sign Up not loaded");
+            return;
+        }
+
         await signIn.create({
             identifier: data.email,
             password: data.password
@@ -65,13 +102,39 @@ export default function SignIn() {
             await signIn.finalize({
                 navigate: ({session, decorateUrl}) =>{
 
-                    route.push(decorateUrl("/") as Href)
+                    // when user will sign in later ((if he logged out by any chance))
+                    setActive({
+                        session: session?.id,
+                    })
+                    Alert.alert("Sign In Successfull!");
+                    route.push(decorateUrl("/") as Href);
                 }
             })
         }
+        else{
+            // sometime not error, its loading state or on the way (e.g - MFA)
+            // so need additional check , if required.
+            setError("root", {message: 'Invalid credentials!'});
+        }
     }
     catch(error: any){
-        console.error(JSON.stringify(error, null, 2))
+        console.error("Sign In Error: ",JSON.stringify(error, null, 2))
+        if(isClerkAPIResponseError(error)){
+            error.errors.forEach((error) => {
+                const fieldName = mapClerkErrorToFormField(error) 
+                setError(
+                    //clerkErrorToFormField[error.meta?.paramName ?? 'identifier'],
+                    fieldName,
+                    //error.meta.paramName === 'identifier' ? 'email' : 'password',
+                    {
+                        message: error.longMessage
+                    });
+            });
+            
+        }
+        else{
+            setError('root', {message: 'Unknown Error!'});
+        }
     }
     // router.replace('/');
   };
@@ -127,9 +190,13 @@ export default function SignIn() {
                             style={{borderColor:'green'}}
                 />
 
+            {errors.root && (
+                <Text style={{color: 'crimson'}}>{errors.root.message}</Text>
+            )}
+
             </View>
             
-
+            
 
             <CustomeButton 
                 text="Sign In"
